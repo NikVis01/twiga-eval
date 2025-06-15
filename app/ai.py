@@ -6,6 +6,9 @@ from langchain_together import ChatTogether
 from langchain_core.tools import StructuredTool
 from pydantic import SecretStr, Field
 
+from langchain_core.runnables import RunnableConfig
+from app.evaluation.query_eval import classify_query_async
+
 from app.database.db import get_user_message_history
 import app.database.db as db
 from app.database.models import Message, User, MessageRole
@@ -180,25 +183,85 @@ async def execute_tool_call(tool_name: str, tool_args: dict, user: User) -> str:
 async def generate_response(
     user: User,
     message: Message,
+    use_history: bool = True,
 ) -> Optional[Message]:
     """Generate a response, handling message batching and tool calls."""
     if user.id is None:
         return None
+    
+    use_history=False
+    #avoids using the history during evaluation
+    if use_history: 
+        history = get_user_message_history(user.id)
+        api_messages = _format_messages([message], history, user)
+    else: 
+        api_messages = _format_messages([message], None, user)
 
-    history = get_user_message_history(user.id)
-    api_messages = _format_messages([message], history, user)
 
     # Create and bind tools to the chat model
     tools = create_langchain_tools(user)
     chat_with_tools = chat.bind_tools(tools)
 
-    # Get the initial response
-    llm_response = chat_with_tools.invoke(api_messages)
-    print("LLM RESPONSE")
-    print(llm_response)
+    for tool in tools:
+        print(f"Tool name: {tool.name}, Description: {tool.description}")
+
+
+    #log the user message including its classification
+    classification = await classify_query_async(message.content)
+    config = RunnableConfig(
+        run_name="Twiga Chatbot Interaction",
+        tags=[
+            "chatbot", 
+            f"user:{user.id}", 
+            f"query_type:{classification["query_type"]}",
+            f"topic:{classification['topic']}", 
+            f"subject: {user.formatted_class_info}",
+        ],
+        metadata={
+            "user_id": user.id,
+            "user_name": user.name,
+            "query_type": classification["query_type"],
+            "topic": classification["topic"],
+        }
+    )
+
+    # # Get the initial response
+    # llm_response = chat_with_tools.invoke(api_messages)
+    llm_response = await chat_with_tools.ainvoke(api_messages, config=config)
+    # print("LLM RESPONSE:")
+    # print(llm_response)
+
+    # # print("First LLM raw response:")
+    # # print("Content:", llm_response.content)
+
+    # print()
+    # # Check if the response contains tool calls
+    # tool_calls = getattr(llm_response, "tool_calls", None)
+
+    # print("Tool Calls:", tool_calls)
+    # if tool_calls:
+    
+
+    temp_tool_calls = None
+    if "python_start" in llm_response.content:
+        temp_tool_calls = llm_response.content
+        temp_tool_calls = temp_tool_calls.replace('<|python_start|>', '').replace('<|python_end|>', '')
+        temp_tool_calls = json.loads(temp_tool_calls)
+
+        print(temp_tool_calls)
+
+        for call in range(len(temp_tool_calls)):
+            for k, v in temp_tool_calls[call]["function"].items():
+                if k == "arguments":
+                    k = "args"
+
+                temp_tool_calls[call][k] = v
 
     # Check if the response contains tool calls
-    tool_calls = getattr(llm_response, "tool_calls", None)
+    tool_calls = getattr(llm_response, "tool_calls", None) or temp_tool_calls
+
+    print(tool_calls)
+
     if tool_calls:
         print("TOOL CALLS")
         # Save the assistant message with tool calls
@@ -252,7 +315,9 @@ async def generate_response(
             )
 
         # Get final response after tool execution
-        final_response = chat.invoke(api_messages)
+        # final_response = chat.invoke(api_messages)
+        final_response = await chat_with_tools.ainvoke(api_messages, config=config)
+
         response_content = str(final_response.content) if final_response.content else ""
 
         # Save the final assistant response
