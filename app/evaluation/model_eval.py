@@ -1,11 +1,9 @@
-'''
-Basic evaluation of model without tools
-TODO: 
-- create target function that can do tool calls like the real chatbot
-'''
-
-from chat_models import chat, system_prompt
-from evaluators import correctness_evaluator, conciseness_evaluator, hallucination_evaluator
+from app.evaluation.chat_models import chat
+from app.evaluation.evaluators import (
+    correctness_evaluator,
+    conciseness_evaluator,
+    hallucination_evaluator,
+)
 
 from langsmith import Client
 from dotenv import load_dotenv
@@ -24,7 +22,7 @@ client = Client()
 
 print("loading dataset...")
 #read the dataset
-dataset = client.read_dataset(dataset_name="Twiga Eval Dataset")
+dataset = client.read_dataset(dataset_name="Twiga Eval Dataset Test")
 # Check if the dataset is empty
 examples = client.list_examples(dataset_id=dataset.id)
 if not examples:
@@ -35,8 +33,8 @@ else:
 
 
 #target function that is called by the evaluation framework 
-# TODO: create target function that can do tool calls like the real chatbot
-async def target(inputs: dict) -> dict:
+# NOTE: This is a bastic target function that does not use tools or the Twiga system prompt (only use for testing purposes)
+async def basic_target(inputs: dict) -> dict:
     api_messages = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": inputs["question"]},
@@ -45,16 +43,48 @@ async def target(inputs: dict) -> dict:
     config = RunnableConfig(tags=["eval-run"])
     response = await chat.ainvoke(api_messages, config=config)
 
+    print(f"Response: {response.content.strip()}")
+
     return {
         "answer": response.content.strip()
     }
 
-print("Target function defined. Ready to run evaluation experiment.")
+#target function that evaluates the real Twiga chatbot 
+from app.ai import generate_response
+from app.database.models import Message, MessageRole, User
+
+async def target(inputs: dict) -> dict:
+    # Fake/mock user data for running the evaluation
+    user = User(
+        id=13,
+        name="John Doe",
+        wa_id="255712345678",
+        role="teacher",
+        state="active",
+        onboarding_state="completed",
+        class_info={"geography": ["os2"]}, 
+        # formatted_class_info="Form Two - Geography"  # set manually if your function uses it
+    )
+
+    # build the user message with the question form the example
+    message = Message(
+        role=MessageRole.user,
+        user_id=user.id,
+        content=inputs["question"]
+    )
+
+    #generate the response using the Twiga chatbot, same as when called from WhatsApp, but without history
+    response = await generate_response(user=user, message=message, use_history=False)
+   
+    return {
+        "answer": response.content.strip() if response else "No response."
+    }
 
 
 ######### Run the evaluation experiment #########
 # after running the evaluation, a link will be provided to view the results in langsmith
 async def main():
+    print("Starting evaluation experiment...")
     experiment_results = await aevaluate(
         target,
         data="Twiga Eval Dataset Test",

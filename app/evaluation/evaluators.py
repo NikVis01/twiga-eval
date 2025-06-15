@@ -3,7 +3,7 @@ Here we can use predefined evaluators and also create our custom evaluator with 
 https://pypi.org/project/openevals/0.0.11rc0/#conciseness
 '''
 
-from chat_models import evaluator_model
+from app.evaluation.chat_models import evaluator_model
 from openevals.llm import create_llm_as_judge
 
 from openevals.prompts import (
