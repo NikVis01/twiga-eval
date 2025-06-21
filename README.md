@@ -65,3 +65,5 @@ python -m app.evaluation.model_eval
 ```
 After the evaluation completes, you'll receive a URL with the results. You can also find them in the dashboard under:
 Datasets & Experiments > YOUR_DATASET_NAME > Experiments
+
+Note : For more informatation on how to setup everything visit the langsmith docs https://docs.smith.langchain.com/
