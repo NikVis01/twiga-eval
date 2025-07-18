@@ -129,7 +129,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-.env.*
 !.env.template
 !.env.template.simple
 
