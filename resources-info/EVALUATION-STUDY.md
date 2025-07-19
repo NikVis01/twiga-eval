@@ -55,5 +55,6 @@ Source: https://qdrant.tech/blog/rag-evaluation-guide/?utm_source=chatgpt.com
 - Tie everything together in CI/CD pipelines
 
 
-## NEXT STEPS
+## ATTACK PLAN
 - What needs to be added/implemented/built specifically to have more robust evaluation and observability?
+
