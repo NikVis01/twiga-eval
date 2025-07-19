@@ -15,8 +15,17 @@
 - Which metrics are we looking for and what are our primary concerns in evaluating Twiga.
 
 ### Correctness
+- How correct the model is,
+- Mostly dependant on quality of retrieval:
+https://dl.acm.org/doi/10.1145/3626772.3657957
+
+- Also affected by query enhancement:
+https://arxiv.org/html/2404.01037v1 
+- Besides query enhancing maybe worth exploring multi-query methods and LLM ranking?
 
 ### Faithfullness
+- Difficult to guage and metrify but there are frameworks for it specifically:
+https://docs.haystack.deepset.ai/docs/faithfulnessevaluator 
 
 
 ## INDUSTRY STANDARDS
@@ -29,6 +38,10 @@
 2. RAGAS
 https://docs.ragas.io/en/stable/
 - Apparently great for Faithfullness and correctness if u have a test dataset available
+
+3. eRAG
+- Mainly a research project, probably a little dated
+https://github.com/alirezasalemi7/eRAG 
 
 3. Custom
 - Tons of custom suites used.
