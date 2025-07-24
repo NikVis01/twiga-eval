@@ -6,9 +6,7 @@ Fill in the `.env`
 * Put your own Together AI API key into LLM_API_KEY (you usually get 5 dollars in free credits)
 
 Run the commands:
-`poetry install`
-or 
-`uv install`
+`uv install` 
 
 And then:
 `source .venv/bin/activate` if on mac/linux, `.venv\Scripts\activate` if on windows. 
