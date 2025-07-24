@@ -5,7 +5,7 @@ Fill in the `.env`
 * Put the Neon DB URI (that I share with you) into DATABASE_URL
 * Put your own Together AI API key into LLM_API_KEY (you usually get 5 dollars in free credits)
 
-Run the commands:
+Run the command:
 `uv install` 
 
 And then:
