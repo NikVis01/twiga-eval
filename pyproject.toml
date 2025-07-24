@@ -15,4 +15,5 @@ dependencies = [
     "together>=1.5.8",
     "uvicorn>=0.34.2",
     "dotenv>=0.9.9"
+    
 ]

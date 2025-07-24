@@ -8,3 +8,4 @@ sqlmodel>=0.0.24
 together>=1.5.8
 uvicorn>=0.34.2
 dotenv>=0.9.9
+openevals==0.1.0
