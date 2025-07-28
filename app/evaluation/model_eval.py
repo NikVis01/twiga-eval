@@ -54,31 +54,56 @@ from app.ai import generate_response
 from app.database.models import Message, MessageRole, User
 
 async def target(inputs: dict) -> dict:
-    # Fake/mock user data for running the evaluation
-    user = User(
-        id=13,
-        name="John Doe",
-        wa_id="255712345678",
-        role="teacher",
-        state="active",
-        onboarding_state="completed",
-        class_info={"geography": ["os2"]}, 
-        # formatted_class_info="Form Two - Geography"  # set manually if your function uses it
-    )
+    """
+    print(f"=== PROCESSING EXAMPLE ===")
+    print(f"Input: {inputs}")
+    """
+    try:
+        print(f"Processing example: {inputs['question']}")
+        # Fake/mock user data for running the evaluation
+        user = User(
+            id=13,
+            name="John Doe",
+            wa_id="255712345678",
+            role="teacher",
+            state="active",
+            onboarding_state="completed",
+            class_info={"geography": ["os2"]}, 
+            # formatted_class_info="Form Two - Geography"  # set manually if your function uses it
+        )
 
-    # build the user message with the question form the example
-    message = Message(
-        role=MessageRole.user,
-        user_id=user.id,
-        content=inputs["question"]
-    )
+        # build the user message with the question form the example
+        message = Message(
+            role=MessageRole.user,
+            user_id=user.id,
+            content=inputs["question"]
+        )
 
-    #generate the response using the Twiga chatbot, same as when called from WhatsApp, but without history
-    response = await generate_response(user=user, message=message, use_history=False)
+        #generate the response using the Twiga chatbot, same as when called from WhatsApp, but without history
+        response = await generate_response(user=user, message=message, use_history=False)
+
+        
+        # print(f"Raw response object: {response}")
+        #print(f"Response type: {type(response)}")
+        if response:
+            print(f"Response content: {response.content}")
+            print(f"Response attributes: {dir(response)}")
    
-    return {
-        "answer": response.content.strip() if response else "No response."
-    }
+        # print(f"Generated response: {response.content.strip() if response else 'No response.'}")
+        result = {"answer": response.content.strip() if response else "No response."}
+        # print(f"Output: {result}")
+        # print(f"=== END EXAMPLE ===")
+        
+        return result
+        
+    except Exception as e:
+        
+        # print(f"Error processing example: {e}")
+        result = {"answer": f"Error: {str(e)}"}
+        # print(f"Output: {result}")
+        # print(f"=== END EXAMPLE ===")
+        
+        return result
 
 
 ######### Run the evaluation experiment #########
