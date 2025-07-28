@@ -38,3 +38,6 @@ https://mirascope.com/blog/langsmith-prompt-management
 
 3. Visualize and compare
 - Dig into the dataviz libraries and stuff?
+
+## BEST PRACTICES AND RESOURCES
+https://www.palantir.com/docs/foundry/aip/best-practices-prompt-engineering
