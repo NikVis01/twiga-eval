@@ -9,3 +9,12 @@
 
 ### templates
 - For future use in generating these system prompts using an LLM.
+
+## Versions
+
+### V1 / baseline.txt
+- Just the baseline that was I think Victor added.
+
+### V2
+- I wasn't happy with how we describe and manage the tool-calling logic. Maybe there's some better ways to do this through langchain. Will talk to Alvaro about it, maybe it doesn't need to be part of the sys prompt.
+- Wanted to include examples and nuance to use-cases of the tools as well as format as more effective XML.
