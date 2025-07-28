@@ -82,9 +82,6 @@ async def target(inputs: dict) -> dict:
         #generate the response using the Twiga chatbot, same as when called from WhatsApp, but without history
         response = await generate_response(user=user, message=message, use_history=False)
 
-        
-        # print(f"Raw response object: {response}")
-        #print(f"Response type: {type(response)}")
         if response:
             print(f"Response content: {response.content}")
             print(f"Response attributes: {dir(response)}")

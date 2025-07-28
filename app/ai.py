@@ -228,8 +228,8 @@ async def generate_response(
     # # Get the initial response
     # llm_response = chat_with_tools.invoke(api_messages)
     llm_response = await chat_with_tools.ainvoke(api_messages, config=config)
-    print("LLM RESPONSE:")
-    print(llm_response)
+    # print("LLM RESPONSE:")
+    # print(llm_response)
 
     # # print("First LLM raw response:")
     # # print("Content:", llm_response.content)
