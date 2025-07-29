@@ -340,7 +340,7 @@ async def generate_response(
             content=response_content,
         )
         db.create_new_message(final_message)
-        ### BELOW MIGHT BE NECESSARY FOR CASES WHERE NO TOOL CALLS ARE PRESENT
+        ### BELOW MIGHT BE NECESSARY FOR CASES WHERE NO TOOL CALLS ARE PRESENT FOR EVALUATION RIGIDITY
         # return final_message
 
 def _format_messages(
