@@ -31,7 +31,6 @@ def get_latest_version_file(category_path: str) -> Optional[str]:
                 version_files.append((version_num, filename))
     
     if version_files:
-        # Sort by version number and return the highest for the category
         version_files.sort(key=lambda x: x[0], reverse=True)
         return version_files[0][1]
     
@@ -46,7 +45,8 @@ def load_and_print_all_prompts() -> Dict[str, str]:
         category_path = os.path.join(base_path, category)
         category_prompts = []
         
-        # Get the latest version file for this category so we only load the most recent prompt. This assumes the files are named like "v1.yaml", "v2.yaml", etc.
+        # Get the latest version file for this category so we only load the most recent prompt. 
+        # This assumes the files are named like "v1.yaml", "v2.yaml", etc.
         latest_file = get_latest_version_file(category_path)
         
         if latest_file:
