@@ -62,4 +62,4 @@ python -m app.evaluation.prompt_mangager.py
 - The prompt uploader will always choose the latest verison of prompt as long as each yaml file in each category is called v1.yaml, v2.yaml, v3.yaml and so on.
 
 Comming features:
-1. Evaluate on the twiga test dataset using different prompts and comparing side by side. This has yet to be implemented since it has to be done programmatically and its missing the tool calls that the agent is in the ai.py file. 
+1. Evaluate on the twiga test dataset using different prompts and comparing side by side. This has yet to be implemented since it has to be done programmatically and its missing the tool calls that the agent is in the ai.py file. This just needs to be built out a little and I'm pretty sure It's very doable.

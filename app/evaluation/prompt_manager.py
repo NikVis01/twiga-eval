@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from langsmith import Client
 from langchain_core.prompts import ChatPromptTemplate
 
+from app.tools.registry import get_tools_metadata
+
 load_dotenv()
 
 BASE_PATH = "app/evaluation/prompts"
